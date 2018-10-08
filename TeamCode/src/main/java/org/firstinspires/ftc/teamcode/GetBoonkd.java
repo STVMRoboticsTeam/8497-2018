@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 /**
  * Created by CST on 9/5/2018.
  */
-@TeleOp
+@TeleOp(name = "GetBoonkd")
 public class GetBoonkd extends LinearOpMode {
 
     private ChassisControl chassisControl;
