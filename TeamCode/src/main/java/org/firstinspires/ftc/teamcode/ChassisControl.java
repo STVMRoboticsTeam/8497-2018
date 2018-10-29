@@ -34,19 +34,6 @@ public class ChassisControl {
         armExtend = opMode.hardwareMap.dcMotor.get("armExtend");
         gamepad1 = opMode.gamepad1;
         gamepad2 = opMode.gamepad2;
-
-        telemetry.addLine("Arm-Pivot: Starting Position? (A)");
-        telemetry.update();
-        while(!(gamepad1.a || gamepad2.a));
-        while(gamepad1.a || gamepad2.a);
-        telemetry.addLine("Arm-Extender: Lowest Position? (Adjust: B) (Done: A)");
-        telemetry.update();
-        while(!(gamepad1.a || gamepad2.a)) {
-            if(gamepad2.b) armExtend.setPower(0.5f);
-            else armExtend.setPower(0f);
-        }
-        telemetry.addLine("Initialization Finished.");
-        telemetry.update();
     }
 
     public void loop() {
@@ -64,6 +51,20 @@ public class ChassisControl {
         } else {
             left.setPower(0);
             right.setPower(0);
+        }
+
+        float lx2 = gamepad2.left_stick_x;
+        if(abs(lx2) > 0.05f) {
+            armPivot.setPower(lx2 / 4);
+        } else {
+            armPivot.setPower(0);
+        }
+
+        float ry2 = gamepad2.right_stick_y;
+        if(abs(ry2) > 0.05f) {
+            armExtend.setPower(ry2);
+        } else {
+            armExtend.setPower(0);
         }
 
         
