@@ -15,7 +15,7 @@ public class GetClawed extends LinearOpMode {
     @Override
     public void runOpMode() {
         chassisControl = new ChassisControl(this);
-        chassisControl.init();
+        chassisControl.init(true);
         waitForStart();
         while(opModeIsActive()) {
             chassisControl.loop();

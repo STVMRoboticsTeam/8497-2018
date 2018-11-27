@@ -16,7 +16,7 @@ public class GetBoonkd extends LinearOpMode {
 
     public void runOpMode() {
         chassisControl = new ChassisControl(this);
-        chassisControl.init();
+        chassisControl.init(false);
         waitForStart();
         while(opModeIsActive()) {
             chassisControl.loop();

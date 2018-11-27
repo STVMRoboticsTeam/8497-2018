@@ -16,6 +16,8 @@ public class ChassisControl {
     private DcMotor armPivot;
     private DcMotor armExtend;
 
+    private DcMotor liftArm;
+
     private Gamepad gamepad1;
     private Gamepad gamepad2;
 
@@ -27,13 +29,14 @@ public class ChassisControl {
         this.telemetry = opMode.telemetry;
     }
 
-    public void init() {
+    public void init(boolean auto) {
         left = opMode.hardwareMap.dcMotor.get("left");
         right = opMode.hardwareMap.dcMotor.get("right");
         armPivot = opMode.hardwareMap.dcMotor.get("armPivot");
         armExtend = opMode.hardwareMap.dcMotor.get("armExtend");
-        gamepad1 = opMode.gamepad1;
-        gamepad2 = opMode.gamepad2;
+        //liftArm = opMode.hardwareMap.dcMotor.get("liftArm");
+        if (!auto) gamepad1 = opMode.gamepad1;
+        if (!auto) gamepad2 = opMode.gamepad2;
     }
 
     public void loop() {
@@ -54,6 +57,7 @@ public class ChassisControl {
         }
 
         float lx2 = gamepad2.left_stick_x;
+        telemetry.addData("left2 x", lx2);
         if(abs(lx2) > 0.05f) {
             armPivot.setPower(lx2 / 4);
         } else {
@@ -61,13 +65,27 @@ public class ChassisControl {
         }
 
         float ry2 = gamepad2.right_stick_y;
+        telemetry.addData("right2 y", ry2);
         if(abs(ry2) > 0.05f) {
             armExtend.setPower(ry2);
         } else {
             armExtend.setPower(0);
         }
 
-        
+        if(gamepad2.b) {
+            liftArm.setPower(0.2);
+        } else if (gamepad2.x) {
+            liftArm.setPower(0.2);
+        } else liftArm.setPower(0);
+    }
+
+    public void liftSpeed(double speeeeeeeeeeeeeeeeeed) {
+        if(liftArm == null) {
+            telemetry.addLine("Hey headass you forgot to initialize the fucking liftarm var");
+            telemetry.update();
+            return;
+        }
+        liftArm.setPower(speeeeeeeeeeeeeeeeeed);
     }
 
 
