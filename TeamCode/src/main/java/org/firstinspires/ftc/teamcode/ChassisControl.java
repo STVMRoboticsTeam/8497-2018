@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -18,11 +19,16 @@ public class ChassisControl {
 
     private DcMotor liftArm;
 
+    private CRServo spinnerServo1;
+    private CRServo spinnerServo2;
+
     private Gamepad gamepad1;
     private Gamepad gamepad2;
 
     private OpMode opMode;
     private Telemetry telemetry;
+
+    private float spinDir;
 
     public ChassisControl(OpMode opMode) {
         this.opMode = opMode;
@@ -34,7 +40,9 @@ public class ChassisControl {
         right = opMode.hardwareMap.dcMotor.get("right");
         armPivot = opMode.hardwareMap.dcMotor.get("armPivot");
         armExtend = opMode.hardwareMap.dcMotor.get("armExtend");
-        //liftArm = opMode.hardwareMap.dcMotor.get("liftArm");
+        liftArm = opMode.hardwareMap.dcMotor.get("liftArm");
+        spinnerServo1 = opMode.hardwareMap.crservo.get("spinServo1");
+        spinnerServo2 = opMode.hardwareMap.crservo.get("spinServo2");
         if (!auto) gamepad1 = opMode.gamepad1;
         if (!auto) gamepad2 = opMode.gamepad2;
     }
@@ -77,16 +85,43 @@ public class ChassisControl {
         } else if (gamepad2.x) {
             liftArm.setPower(0.2);
         } else liftArm.setPower(0);
+
+		if(gamepad2.right_trigger > 0.05f) {
+			enableSpinning(false);
+		} else if(gamepad2.left_trigger > 0.05f) {
+			enableSpinning(true);
+		} else {
+			disableSpinning();
+		}
     }
 
+	/**
+	 *
+	 * @return float containing the spin direction. negative for inward, 0 for disabled, positive for outward.
+	 */
+	public float isSpinningEnabled() {
+    	return spinDir;
+	}
+
     public void liftSpeed(double speeeeeeeeeeeeeeeeeed) {
-        if(liftArm == null) {
-            telemetry.addLine("Hey headass you forgot to initialize the fucking liftarm var");
-            telemetry.update();
-            return;
-        }
         liftArm.setPower(speeeeeeeeeeeeeeeeeed);
     }
 
+	/**
+	 * Enables spinServo1 and spinServo2 if not already
+	 */
+	public void enableSpinning(boolean outward) {
+		spinnerServo1.setPower(outward ? -0.7 : 0.7);
+		spinnerServo2.setPower(outward ? 0.7 : -0.7);
+		spinDir = outward ? -1 : 1;
+	}
 
+	/**
+	 * Disables spinServo1 and spinServo2 if not already
+	 */
+	public void disableSpinning() {
+		spinnerServo1.setPower(0);
+		spinnerServo2.setPower(0);
+		spinDir = 0;
+	}
 }
