@@ -83,7 +83,7 @@ public class ChassisControl {
         if(gamepad2.b) {
             liftArm.setPower(0.2);
         } else if (gamepad2.x) {
-            liftArm.setPower(0.2);
+            liftArm.setPower(-0.2);
         } else liftArm.setPower(0);
 
 		if(gamepad2.right_trigger > 0.05f) {
