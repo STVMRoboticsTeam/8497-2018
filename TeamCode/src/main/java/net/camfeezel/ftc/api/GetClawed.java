@@ -16,10 +16,11 @@ public class GetClawed extends LinearOpMode {
         chassisControl = new ChassisControl(this);
         chassisControl.init(true);
         waitForStart();
-        while(opModeIsActive()) {
-            chassisControl.loop();
-        }
-
-
+        // TODO autonomous
+        chassisControl.liftArm(1, 4000);
+        sleep(100);
+        chassisControl.drive(0.2);
+        sleep(1000);
+        chassisControl.stopDrive();
     }
 }
