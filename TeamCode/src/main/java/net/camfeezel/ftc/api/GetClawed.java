@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+package net.camfeezel.ftc.api;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 /**
  * Created by CST on 9/5/2018.
