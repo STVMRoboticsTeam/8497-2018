@@ -148,15 +148,26 @@ public class ChassisControl {
         }
     }
 
-    public void liftArm(double speed, long position) {
-        while (liftArm.getCurrentPosition() <=  position - 10 || liftArm.getCurrentPosition() >= position + 10) {
-            if (liftArm.getCurrentPosition() > liftArmEncoderStart) {
-                liftArm.setPower(speed);
+    public void liftArm(double speed, long positionDelta) {
+        long initial = liftArm.getCurrentPosition();
+        telemetry.addData("pos", liftArm.getCurrentPosition());
+        telemetry.update();
+        while (liftArm.getCurrentPosition() <  initial + (positionDelta - 100) || liftArm.getCurrentPosition() > initial + (positionDelta + 100)) {
+            telemetry.addData("pos", liftArm.getCurrentPosition());
+            telemetry.update();
+            if (liftArm.getCurrentPosition() < liftArmEncoderStart) {
+                if(liftArm.getCurrentPosition() < initial + positionDelta) liftArm.setPower(speed);
+                if(liftArm.getCurrentPosition() > initial + positionDelta) liftArm.setPower(-speed);
             } else {
                 liftArm.setPower(0);
                 break;
             }
         }
+        liftArm.setPower(0);
+    }
+
+    public long getLiftPosition() {
+        return liftArm.getCurrentPosition();
     }
 
 	/**
