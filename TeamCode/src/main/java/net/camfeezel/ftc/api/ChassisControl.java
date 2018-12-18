@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode;
+package net.camfeezel.ftc.api;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -19,6 +20,8 @@ public class ChassisControl {
 
     private DcMotor liftArm;
 
+    private Servo armOrient;
+
     private CRServo spinnerServo1;
     private CRServo spinnerServo2;
 
@@ -29,6 +32,10 @@ public class ChassisControl {
     private Telemetry telemetry;
 
     private float spinDir;
+
+    private long armExtendEncoderStart;
+    private long armPivotEncoderStart;
+    private long liftArmEncoderStart;
 
     public ChassisControl(OpMode opMode) {
         this.opMode = opMode;
@@ -41,10 +48,15 @@ public class ChassisControl {
         armPivot = opMode.hardwareMap.dcMotor.get("armPivot");
         armExtend = opMode.hardwareMap.dcMotor.get("armExtend");
         liftArm = opMode.hardwareMap.dcMotor.get("liftArm");
+        armOrient = opMode.hardwareMap.servo.get("armOrient");
         spinnerServo1 = opMode.hardwareMap.crservo.get("spinServo1");
         spinnerServo2 = opMode.hardwareMap.crservo.get("spinServo2");
         if (!auto) gamepad1 = opMode.gamepad1;
         if (!auto) gamepad2 = opMode.gamepad2;
+        armExtendEncoderStart = armExtend.getCurrentPosition();
+        armPivotEncoderStart = armPivot.getCurrentPosition();
+        liftArmEncoderStart = armExtend.getCurrentPosition();
+
     }
 
     public void loop() {
@@ -87,30 +99,93 @@ public class ChassisControl {
         } else liftArm.setPower(0);
 
 		if(gamepad2.right_trigger > 0.05f) {
-			enableSpinning(false);
+			spin(false);
 		} else if(gamepad2.left_trigger > 0.05f) {
-			enableSpinning(true);
+			spin(true);
 		} else {
-			disableSpinning();
+			stopSpin();
 		}
+		telemetry.update();
+    }
+
+    public void drive(double power){
+        left.setPower(power);
+        right.setPower(power);
+    }
+
+    /**
+     * positive turns right
+     * @param power
+     */
+    public void turn(double power) {
+        left.setPower(power);
+        right.setPower(-power);
+    }
+
+    public void stopDrive() {
+        left.setPower(0);
+        right.setPower(0);
+    }
+
+    /**
+     *
+     * @param dir a value from -1 to 1
+     */
+    public void armExtned(float dir) {
+        if(armExtend.getCurrentPosition() > armExtendEncoderStart)
+            armExtend.setPower(dir);
+        else  armExtend.setPower(0);
+    }
+
+    public void armExtend(float dir, long position) {
+        long pos = armExtend.getCurrentPosition();
+        if(pos > position - 10 && pos < position + 10) {
+            armExtend.setPower(0);
+        } else {
+            if(pos > armExtendEncoderStart) {
+                armExtend.setPower(dir);
+            } else armExtend.setPower(0);
+        }
+    }
+
+    public void liftArm(double speed, long positionDelta) {
+        long initial = liftArm.getCurrentPosition();
+        telemetry.addData("pos", liftArm.getCurrentPosition());
+        telemetry.update();
+        while (liftArm.getCurrentPosition() <  initial + (positionDelta - 100) || liftArm.getCurrentPosition() > initial + (positionDelta + 100)) {
+            telemetry.addData("pos", liftArm.getCurrentPosition());
+            telemetry.update();
+            if (liftArm.getCurrentPosition() < liftArmEncoderStart) {
+                if(liftArm.getCurrentPosition() < initial + positionDelta) liftArm.setPower(speed);
+                if(liftArm.getCurrentPosition() > initial + positionDelta) liftArm.setPower(-speed);
+            } else {
+                liftArm.setPower(0);
+                break;
+            }
+        }
+        liftArm.setPower(0);
+    }
+
+    public long getLiftPosition() {
+        return liftArm.getCurrentPosition();
     }
 
 	/**
 	 *
 	 * @return float containing the spin direction. negative for inward, 0 for disabled, positive for outward.
 	 */
-	public float isSpinningEnabled() {
+	public float isSpinning() {
     	return spinDir;
 	}
 
     public void liftSpeed(double speeeeeeeeeeeeeeeeeed) {
-        liftArm.setPower(speeeeeeeeeeeeeeeeeed);
+	    liftArm.setPower(speeeeeeeeeeeeeeeeeed);
     }
 
 	/**
 	 * Enables spinServo1 and spinServo2 if not already
 	 */
-	public void enableSpinning(boolean outward) {
+	public void spin(boolean outward) {
 		spinnerServo1.setPower(outward ? -0.7 : 0.7);
 		spinnerServo2.setPower(outward ? 0.7 : -0.7);
 		spinDir = outward ? -1 : 1;
@@ -119,7 +194,7 @@ public class ChassisControl {
 	/**
 	 * Disables spinServo1 and spinServo2 if not already
 	 */
-	public void disableSpinning() {
+	public void stopSpin() {
 		spinnerServo1.setPower(0);
 		spinnerServo2.setPower(0);
 		spinDir = 0;

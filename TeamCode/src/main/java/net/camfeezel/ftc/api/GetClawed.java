@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+package net.camfeezel.ftc.api;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 /**
  * Created by CST on 9/5/2018.
@@ -17,10 +16,15 @@ public class GetClawed extends LinearOpMode {
         chassisControl = new ChassisControl(this);
         chassisControl.init(true);
         waitForStart();
-        while(opModeIsActive()) {
-            chassisControl.loop();
-        }
-
+        // TODO autonomous
+        chassisControl.liftArm(0.5, -20000);
+        chassisControl.drive(0.2);
+        sleep(5000);
+        chassisControl.turn(0.2);
+        sleep(2000);
+        chassisControl.drive(0.3);
+        sleep(3000);
+        chassisControl.stopDrive();
 
     }
 }
