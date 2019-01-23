@@ -17,7 +17,6 @@ public class GetClawed extends LinearOpMode {
         chassisControl.init(true);
         waitForStart();
         // TODO autonomous
-        chassisControl.liftArm(0.5, -20000);
         chassisControl.drive(0.2);
         sleep(5000);
         chassisControl.turn(0.2);

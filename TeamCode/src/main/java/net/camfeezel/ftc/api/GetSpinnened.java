@@ -7,18 +7,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "GetSpinnened")
 public class GetSpinnened extends LinearOpMode {
-	private CRServo s1;
-	private CRServo s2;
 
+	private ChassisControl cc = new ChassisControl(this);
 
 	@Override
 	public void runOpMode() {
-		s1 = hardwareMap.crservo.get("s1");
-		s2 = hardwareMap.crservo.get("s2");
+		cc.init(false);
 		waitForStart();
 		while(opModeIsActive()) {
-			s1.setPower(0.3);
-			s2.setPower(0.3);
+			if(Math.abs(gamepad1.left_stick_y) > 0.04f) {
+				float ly3 = gamepad1.left_stick_y * gamepad1.left_stick_y * gamepad1.left_stick_y;
+				telemetry.addData("LY", gamepad1.left_stick_y);
+				telemetry.addData("LY^3", ly3);
+				cc.drive(ly3);
+			} else cc.stopDrive();
 		}
 	}
 }
