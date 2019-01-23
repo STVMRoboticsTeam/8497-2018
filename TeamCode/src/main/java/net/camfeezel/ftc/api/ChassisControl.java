@@ -10,46 +10,24 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import static java.lang.Math.*;
 
-public class ChassisControl {
 
-    private DcMotor left;
-    private DcMotor right;
+/**
+ * Advanced Chassis Control for 2019 FTC Robot (Team 8497)
+ *
+ * Copyright* Cameron Feezel, 2019
+ * All Rights Reserved.
+ */
+public class ChassisControl extends Chassis2Motor {
 
-    private Gamepad gamepad1;
-    private Gamepad gamepad2;
-
-    private OpMode opMode;
-    private Telemetry telemetry;
+    // Add new motors/servos here.
 
     public ChassisControl(OpMode opMode) {
-        this.opMode = opMode;
-        this.telemetry = opMode.telemetry;
+        super(opMode);
     }
 
     public void init(boolean auto) {
-        left = opMode.hardwareMap.dcMotor.get("left");
-        right = opMode.hardwareMap.dcMotor.get("right");
-        if (!auto) gamepad1 = opMode.gamepad1;
-        if (!auto) gamepad2 = opMode.gamepad2;
-
+        super.init(auto);
     }
 
-    public void drive(double power){
-        left.setPower(power);
-        right.setPower(power);
-    }
 
-    /**
-     * positive turns right
-     * @param power
-     */
-    public void turn(double power) {
-        left.setPower(power);
-        right.setPower(-power);
-    }
-
-    public void stopDrive() {
-        left.setPower(0);
-        right.setPower(0);
-    }
 }
