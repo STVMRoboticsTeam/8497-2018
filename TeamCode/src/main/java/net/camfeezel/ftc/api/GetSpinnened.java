@@ -20,6 +20,7 @@ public class GetSpinnened extends LinearOpMode {
 				telemetry.addData("LY", gamepad1.left_stick_y);
 				telemetry.addData("LY^3", ly3);
 				cc.drive(ly3);
+				telemetry.update();
 			} else cc.stopDrive();
 		}
 	}

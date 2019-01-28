@@ -20,14 +20,83 @@ import static java.lang.Math.*;
 public class ChassisControl extends Chassis2Motor {
 
     // Add new motors/servos here.
+    private DcMotor outwardsArm;
+    private DcMotor liftArm;
+    private DcMotor mineralArm;
+
+    private Servo mineralServo;
+    private Servo claimServo;
+    private CRServo mineralPivotServo;
 
     public ChassisControl(OpMode opMode) {
         super(opMode);
+        outwardsArm = opMode.hardwareMap.dcMotor.get("outwardsArm");
+        liftArm = opMode.hardwareMap.dcMotor.get("liftArm");
+        mineralArm = opMode.hardwareMap.dcMotor.get("mineralArm");
+
+        mineralServo = opMode.hardwareMap.servo.get("mineralServo");
+        claimServo = opMode.hardwareMap.servo.get("claimServo");
+        mineralPivotServo = opMode.hardwareMap.crservo.get("mineralPivotServo");
     }
 
     public void init(boolean auto) {
         super.init(auto);
     }
 
+    public void moveOutwardsArm(float power) {
+        outwardsArm.setPower(power);
+    }
+
+    public void stopOutwardsArm() {
+        outwardsArm.setPower(0);
+    }
+
+    public long getOutwardsArm() {
+        return outwardsArm.getCurrentPosition();
+    }
+
+    public void moveLiftArm(float power) {
+        liftArm.setPower(power);
+    }
+
+    public void stopLiftArm() {
+        liftArm.setPower(0);
+    }
+
+    public long getLiftArm() {
+        return liftArm.getCurrentPosition();
+    }
+
+    public void moveMineralArm(float power) {
+        mineralArm.setPower(power);
+    }
+
+    public long getMineralArm() {
+        return mineralArm.getCurrentPosition();
+    }
+
+    public void stopMineralArm() {
+        mineralArm.setPower(0);
+    }
+
+    public void moveMineralServo(double deg) {
+        mineralServo.setPosition(deg);
+    }
+
+    public double getMineralServoPos() {
+        return mineralServo.getPosition();
+    }
+
+    public void moveClaimServo(double deg) {
+        claimServo.setPosition(deg);
+    }
+
+    public double getClaimServoPos() {
+        return claimServo.getPosition();
+    }
+
+    public void moveMineralPivotServo(double power) {
+        mineralPivotServo.setPower(power);
+    }
 
 }
