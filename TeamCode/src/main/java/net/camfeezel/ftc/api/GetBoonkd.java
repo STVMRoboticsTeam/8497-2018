@@ -120,22 +120,7 @@ public class GetBoonkd extends LinearOpMode {
 				b = !b;
 			}
 			if(!gamepad2.b && bHold) bHold = false;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+			oh fuck hes got airpods in oh god oh fuck
 
 
 			telemetry.update();
