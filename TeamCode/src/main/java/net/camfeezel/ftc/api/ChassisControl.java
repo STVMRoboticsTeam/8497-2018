@@ -27,6 +27,7 @@ public class ChassisControl extends Chassis2Motor {
     private Servo mineralServo;
     private Servo claimServo;
     private CRServo mineralPivotServo;
+    private CRServo mineralSuccServo;
 
     public ChassisControl(OpMode opMode) {
         super(opMode);
@@ -37,6 +38,7 @@ public class ChassisControl extends Chassis2Motor {
         mineralServo = opMode.hardwareMap.servo.get("mineralServo");
         claimServo = opMode.hardwareMap.servo.get("claimServo");
         mineralPivotServo = opMode.hardwareMap.crservo.get("mineralPivotServo");
+        mineralSuccServo = opMode.hardwareMap.crservo.get("mineralSuccServo");
     }
 
     public void init(boolean auto) {
@@ -99,4 +101,15 @@ public class ChassisControl extends Chassis2Motor {
         mineralPivotServo.setPower(power);
     }
 
+    public void stopMineralPivotServo() {
+    	mineralPivotServo.setPower(0f);
+	}
+
+    public void moveMineralSuccServo(double power) {
+    	mineralSuccServo.setPower(power);
+	}
+
+	public void stopMineralSuccServo() {
+    	mineralSuccServo.setPower(0f);
+	}
 }

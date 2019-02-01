@@ -13,11 +13,7 @@ public class GetBoonkd extends LinearOpMode {
 
     private ChassisControl chassisControl;
 
-    private boolean b;
-    private boolean bHold;
-
     @Override
-
     public void runOpMode() {
         chassisControl = new ChassisControl(this);
         chassisControl.init(false);
@@ -29,11 +25,10 @@ public class GetBoonkd extends LinearOpMode {
 			float rt = gamepad1.right_trigger;
 			float lt = gamepad1.left_trigger;
 			float ly2 = gamepad2.left_stick_y;
-			telemetry.addData("left y", ly);
-            telemetry.addData("Right x", rx);
-			telemetry.addData("left y2", ly2);
 			telemetry.addData("Outwards", chassisControl.getOutwardsArm());
 			telemetry.addData("Lift", chassisControl.getLiftArm());
+			telemetry.addData("Mineral Lift", chassisControl.getMineralArm());
+			telemetry.addData("Mineral Servo", chassisControl.getMineralServoPos());
 
 			/* GamePad1
 			Andrew's Controls
@@ -71,6 +66,22 @@ public class GetBoonkd extends LinearOpMode {
 				chassisControl.stopOutwardsArm();
 			}
 
+			if(gamepad1.right_trigger > 0.05f) {
+				chassisControl.moveMineralPivotServo(gamepad1.right_trigger);
+			} else if(gamepad1.left_trigger > 0.05f) {
+				chassisControl.moveMineralPivotServo(-gamepad1.left_trigger);
+			} else {
+				chassisControl.stopMineralPivotServo();
+			}
+
+			if(gamepad1.b) {
+				chassisControl.moveMineralSuccServo(1f);
+			} else if(gamepad1.x) {
+				chassisControl.moveMineralSuccServo(-1f);
+			} else {
+				chassisControl.stopMineralSuccServo();
+			}
+
 			/* GamePad2
 			Matthew's Controls
 
@@ -82,7 +93,7 @@ public class GetBoonkd extends LinearOpMode {
 			 */
 
 			if(gamepad2.y) {
-				if(chassisControl.getLiftArm() < 16000) {
+				if(chassisControl.getLiftArm() < 20000) {
 					chassisControl.moveLiftArm(0.7f);
 				} else {
 					chassisControl.stopLiftArm();
@@ -99,30 +110,28 @@ public class GetBoonkd extends LinearOpMode {
 
 			if(abs(ly2) > 0.05f) {
 				if(ly2 > 0) {
-					if(chassisControl.getMineralArm() > 0) {
-						chassisControl.moveMineralArm(ly2);
+					if(chassisControl.getMineralArm() < 3000) {
+						chassisControl.moveMineralArm(-ly2);
 					} else {
 						chassisControl.stopMineralArm();
 					}
 				} else {
-					if(chassisControl.getMineralArm() < 3000) {
-						chassisControl.moveMineralArm(ly2);
+					if(chassisControl.getMineralArm() > 0) {
+						chassisControl.moveMineralArm(-ly2);
 					} else {
 						chassisControl.stopMineralArm();
 					}
 				}
+			} else {
+				chassisControl.stopMineralArm();
 			}
 
-			if(gamepad2.b && !bHold) {
-				if (!b) chassisControl.moveMineralServo(60);
-				else chassisControl.moveMineralServo(170);
-				bHold = true;
-				b = !b;
+			if(gamepad2.b) {
+				chassisControl.moveMineralServo(0f);
 			}
-			if(!gamepad2.b && bHold) bHold = false;
-			oh fuck hes got airpods in oh god oh fuck
-
-
+			if(gamepad2.x) {
+				chassisControl.moveMineralServo(0.5f);
+			}
 			telemetry.update();
         }
 
